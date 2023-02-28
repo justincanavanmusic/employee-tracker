@@ -16,8 +16,9 @@ CREATE TABLE role (
 CREATE TABLE employee (
   id INT AUTO_INCREMENT PRIMARY KEY,
   first_name VARCHAR(30),
-  last_name VARCHAR(30)
- 
+  last_name VARCHAR(30),
+  title VARCHAR(30),
+  salary DECIMAL
 );
 
 

@@ -77,13 +77,13 @@ const employeeQuestions=
     type: 'input',
     message: `What is the employee's last name?`,
     name: 'lastname'
-  }
-  // {
-  // type: 'list',
-  // message: `What is the employee's role?`,
-  // choices: ['Sales Lead', "Salesperson", "Lead Engineer", "Software Engineer", "Account Manager", "Accountant", "Legal Team Lead", "Lawyer"],
-  // name: 'employeerole'
-  // },
+  },
+  {
+  type: 'list',
+  message: `What is the employee's role?`,
+  choices: ['Sales Lead', "Salesperson", "Lead Engineer", "Software Engineer", "Account Manager", "Accountant", "Legal Team Lead", "Lawyer"],
+  name: 'employeerole'
+  },
   // {
   // type: 'list',
   // message: `Who is the employee's manager?`,
@@ -182,8 +182,30 @@ function addEmployees() {
   const addEmployeeObj={
     id: dataObj.length+1,
     first_name: answersObj.firstname,
-    last_name: answersObj.lastname
-  }
+    last_name: answersObj.lastname,
+    title: answersObj.employeerole,
+    salary: function () {
+      if(answersObj.employeerole==="Sales Lead") {
+      return 100000
+    } if(answersObj.employeerole==="Salesperson") {
+      return 80000
+    } if(answersObj.employeerole==="Lead Engineer") {
+      return 150000
+    } if(answersObj.employeerole==="Software Engineer") {
+      return 120000
+    } if(answersObj.employeerole==="Account Manager") {
+      return 160000
+    } if(answersObj.employeerole==="Legal Team Lead") {
+      return 250000
+    } if(answersObj.employeerole==="Accountant") {
+      return 125000
+    } if(answersObj.employeerole==="Lawyer") {
+      return 190000
+    } else {
+      console.log("somethings wrong");
+    }
+  } ()
+  };
   dataObj.push(addEmployeeObj)
   console.table(dataObj);
 
