@@ -42,30 +42,30 @@ const departmentQuestions= [   ///add department
   const roleQuestions=
    [             {
      type: 'input',
-     message: 'What is the name of the role?',
-     name: 'name'
+     message: 'What is the title of the role?',
+     name: 'title'
     },
     {
     type: 'input',
     message: 'What is the salary of the role?',
     name: 'salary'
-    },
-    {
-    type: 'list',
-    message: 'Which department does the role belong to?',
-    choices: ['Engineering', "Finance", "Legal", "Sales", "Service"],
-    name: 'deptrole',
-    validate: function (userAnswer) {
-      if (userAnswer.length>0) {
-        console.log (`
-Added "${userAnswer}" to the database.`);
+    }
+//     {
+//     type: 'list',
+//     message: 'Which department does the role belong to?',
+//     choices: ['Engineering', "Finance", "Legal", "Sales", "Service"],
+//     name: 'deptrole',
+//     validate: function (userAnswer) {
+//       if (userAnswer.length>0) {
+//         console.log (`
+// Added "${userAnswer}" to the database.`);
 
-      } 
-      else {
-          return "Please give a response";
-      }
-  }
-  }
+//       } 
+//       else {
+//           return "Please give a response";
+//       }
+//   }
+//   }
 ]
 const employeeQuestions=
  [ {
@@ -77,20 +77,19 @@ const employeeQuestions=
     type: 'input',
     message: `What is the employee's last name?`,
     name: 'lastname'
-  },
-  {
-  type: 'list',
-  message: `What is the employee's role?`,
-  choices: ['Sales Lead', "Salesperson", "Lead Engineer", "Software Engineer", "Account Manager", "Accountant", "Legal Team Lead", "Lawyer"],
-  name: 'employeerole'
-  },
-  {
-  type: 'list',
-  message: `Who is the employee's manager?`,
-  choices: ['None', "John Doe", "Mike Chan", "Ashley Rodriguez", "Kevin Tupik", "Kunal Singh", "Malia Brown", "Sarah Lourd", "Tom Allen"],
-  name: 'manager'
-                                //back to first question
   }
+  // {
+  // type: 'list',
+  // message: `What is the employee's role?`,
+  // choices: ['Sales Lead', "Salesperson", "Lead Engineer", "Software Engineer", "Account Manager", "Accountant", "Legal Team Lead", "Lawyer"],
+  // name: 'employeerole'
+  // },
+  // {
+  // type: 'list',
+  // message: `Who is the employee's manager?`,
+  // choices: ['None', "John Doe", "Mike Chan", "Ashley Rodriguez", "Kevin Tupik", "Kunal Singh", "Malia Brown", "Sarah Lourd", "Tom Allen"],
+  // name: 'manager'
+  // }
 ]
   const updateEmpRole =
 [ 
@@ -134,12 +133,21 @@ runQuestion();
 function addDepartment() {
   inquirer.prompt(departmentQuestions)
   .then(answersObject=>{
-    connection.query('select * from department', function(err, dataArrayOfObj){ 
+    connection.query('select * from department', function(err, dataObj){ 
       if (err) throw err
+
+    const addedDeptObj = {
+      id: dataObj.length+1,
+      name: answersObject.dept
+    }
+    dataObj.push(addedDeptObj);
   
-  dataArrayOfObj.push(answersObject.dept)
-  // console.log(typeof answersObject.dept)
-  console.table(dataArrayOfObj);
+  // dataObj.push(JSON.parse(answersObject.dept))
+  // console.log(answersObject.dept)
+
+  console.table(dataObj); //contains all info
+  // console.log(typeof answersObject) //prints {dept: Justin}   //typeof object
+  // console.log(dataObj[0]);
 
   runQuestion();
     })
@@ -147,16 +155,19 @@ function addDepartment() {
 }
 function addRoles() {
   inquirer.prompt(roleQuestions)
-  .then(answersObject=>{
-    connection.query('select * from role', function(err, dataArrayOfObj){ 
+  .then(answersObj=>{
+    connection.query('select * from role', function(err, dataObj){ 
       if (err) throw err
-  
-  dataArrayOfObj.push(answersObject.name)
-  dataArrayOfObj.push(answersObject.salary)
-  dataArrayOfObj.push(answersObject.deptrole);
 
-  // console.log(typeof answersObject.dept)
-  console.table(dataArrayOfObj);
+    const addedRoleObj={
+      id: dataObj.length+1,
+      title: answersObj.title,
+      salary: answersObj.salary
+    }
+    dataObj.push(addedRoleObj)
+  
+
+  console.table(dataObj);
 
   runQuestion();
     })
@@ -164,22 +175,41 @@ function addRoles() {
 }
 function addEmployees() {
   inquirer.prompt(employeeQuestions)
-  .then(answersObject=>{
-    connection.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${answersObject.firstname}', '${answersObject.lastname}', '${answersObject.employeerole}', '${answersObject.manager}')`,
-    
-    function(err, dataArrayOfObj){ 
+  .then(answersObj=>{
+    connection.query('select * from employee', function(err, dataObj){ 
       if (err) throw err
   
-  // INSERT INTO employee (first_name, last_name, role_id, manager_id)
-  // VALUES (`${answersObject.firstname}, ${answersObject.lastname}, ${answersObject.employeerole}, ${answersObject.manager}` );
-
-  // console.log(answersObject)
-  console.table(answersObject);
+  const addEmployeeObj={
+    id: dataObj.length+1,
+    first_name: answersObj.firstname,
+    last_name: answersObj.lastname
+  }
+  dataObj.push(addEmployeeObj)
+  console.table(dataObj);
 
   runQuestion();
     })
   })
 }
+// function addEmployees() {
+//   inquirer.prompt(employeeQuestions)
+//   .then(answersObj=>{
+//     connection.query(`INSERT INTO employee (first_name, last_name) VALUES ('${answersObj.firstname}', '${answersObj.lastname}')`,
+    
+//     function(err, dataObj){ 
+//       if (err) throw err;
+  
+//   const addEmployeeObj={
+//     id: dataObj.length+1,
+//     first_name: answersObj.firstname,
+//     last_name: answersObj.lastname
+//   }
+//   console.table(dataObj);
+
+//   runQuestion();
+//     })
+//   })
+// }
     // employee.push(answersObject.firstname)
   // data.push(answersObject.lastname)
   // data.push(answersObject.employeerole);
