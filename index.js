@@ -148,7 +148,7 @@ function addDepartment() {
 function addRoles() {
   inquirer.prompt(roleQuestions)
   .then(answersObject=>{
-    connection.query('select * from department', function(err, dataArrayOfObj){ 
+    connection.query('select * from role', function(err, dataArrayOfObj){ 
       if (err) throw err
   
   dataArrayOfObj.push(answersObject.name)
@@ -165,22 +165,25 @@ function addRoles() {
 function addEmployees() {
   inquirer.prompt(employeeQuestions)
   .then(answersObject=>{
-    connection.query('select * from department', function(err, dataArrayOfObj){ 
+    connection.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${answersObject.firstname}', '${answersObject.lastname}', '${answersObject.employeerole}', '${answersObject.manager}')`,
+    
+    function(err, dataArrayOfObj){ 
       if (err) throw err
   
-  dataArrayOfObj.push(answersObject.firstname)
-  dataArrayOfObj.push(answersObject.lastname)
-  dataArrayOfObj.push(answersObject.employeerole);
-  dataArrayOfObj.push(answersObject.manager);
+  // INSERT INTO employee (first_name, last_name, role_id, manager_id)
+  // VALUES (`${answersObject.firstname}, ${answersObject.lastname}, ${answersObject.employeerole}, ${answersObject.manager}` );
 
-  // console.log(typeof answersObject.dept)
-  console.table(dataArrayOfObj);
+  // console.log(answersObject)
+  console.table(answersObject);
 
   runQuestion();
     })
   })
 }
-
+    // employee.push(answersObject.firstname)
+  // data.push(answersObject.lastname)
+  // data.push(answersObject.employeerole);
+  // data.push(answersObject.manager);
   function runQuestion() {
     inquirer.prompt(mainQuestion)
   
