@@ -132,20 +132,24 @@ runQuestion();
 }
 function addDepartment() {
   inquirer.prompt(departmentQuestions)
-  .then(answersObject=>{
-    connection.query('select * from department', function(err, dataObj){ 
-      if (err) throw err
+  .then(answersObj=>{
+    // connection.query('select * from department', function(err, dataObj){ 
+    //   if (err) throw err
+    connection.query(`insert into department(name) values("${answersObj.name}")`, function (err){
+      if(err) throw err;
+      console.log("dept added");
+    
 
-    const addedDeptObj = {
-      id: dataObj.length+1,
-      name: answersObject.dept
-    }
-    dataObj.push(addedDeptObj);
+    // const addedDeptObj = {
+    //   id: dataObj.length+1,
+    //   name: answersObj.dept
+    // }
+    // dataObj.push(addedDeptObj);
   
   // dataObj.push(JSON.parse(answersObject.dept))
   // console.log(answersObject.dept)
 
-  console.table(dataObj); //contains all info
+  // console.table(dataObj); //contains all info
   // console.log(typeof answersObject) //prints {dept: Justin}   //typeof object
   // console.log(dataObj[0]);
 
@@ -156,21 +160,25 @@ function addDepartment() {
 function addRoles() {
   inquirer.prompt(roleQuestions)
   .then(answersObj=>{
-    connection.query('select * from role', function(err, dataObj){ 
-      if (err) throw err
+  //   connection.query('select * from role', function(err, dataObj){ 
+  //     if (err) throw err
 
-    const addedRoleObj={
-      id: dataObj.length+1,
-      title: answersObj.title,
-      salary: answersObj.salary
-    }
-    dataObj.push(addedRoleObj)
+  //   const addedRoleObj={
+  //     id: dataObj.length+1,
+  //     title: answersObj.title,
+  //     salary: answersObj.salary
+  //   }
+  //   dataObj.push(addedRoleObj)
   
 
-  console.table(dataObj);
+  // console.table(dataObj);
 
-  runQuestion();
-    })
+  // runQuestion();
+  //   })
+  connection.query(`insert into role(title, salary) values("${answersObj.title}",${answersObj.salary})`, function (err){
+    if(err) throw err;
+    console.log("role added");
+  })
   })
 }
 function addEmployees() {
