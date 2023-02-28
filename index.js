@@ -1,6 +1,6 @@
 const inquirer = require('inquirer');
 const fs=require('fs');
-// const cTable = require('console.table');
+const cTable = require('console.table');
 const mysql = require('mysql2');
 
 
@@ -108,7 +108,6 @@ const employeeQuestions=
           
   }
 ]
-
 function displayDepartments() {
   connection.query('select * from department', function(err, data){ 
     if (err) throw err
@@ -124,17 +123,63 @@ console.table(data);
 runQuestion();
   })
 }
-// function addDepartment() {
-//   inquirer.prompt(departmentQuestions)
-//   .then(answers=>{
-//     connection.query('select * from department', function(err, data){ 
-//       if (err) throw err
-//   console.table(data);
-//   runQuestion();
-//     })
-//   })
-// }
 
+function displayEmployees() {
+  connection.query('select * from employee', function(err, data){ 
+    if (err) throw err
+console.table(data);
+runQuestion();
+  })
+}
+function addDepartment() {
+  inquirer.prompt(departmentQuestions)
+  .then(answersObject=>{
+    connection.query('select * from department', function(err, dataArrayOfObj){ 
+      if (err) throw err
+  
+  dataArrayOfObj.push(answersObject.dept)
+  // console.log(typeof answersObject.dept)
+  console.table(dataArrayOfObj);
+
+  runQuestion();
+    })
+  })
+}
+function addRoles() {
+  inquirer.prompt(roleQuestions)
+  .then(answersObject=>{
+    connection.query('select * from department', function(err, dataArrayOfObj){ 
+      if (err) throw err
+  
+  dataArrayOfObj.push(answersObject.name)
+  dataArrayOfObj.push(answersObject.salary)
+  dataArrayOfObj.push(answersObject.deptrole);
+
+  // console.log(typeof answersObject.dept)
+  console.table(dataArrayOfObj);
+
+  runQuestion();
+    })
+  })
+}
+function addEmployees() {
+  inquirer.prompt(employeeQuestions)
+  .then(answersObject=>{
+    connection.query('select * from department', function(err, dataArrayOfObj){ 
+      if (err) throw err
+  
+  dataArrayOfObj.push(answersObject.firstname)
+  dataArrayOfObj.push(answersObject.lastname)
+  dataArrayOfObj.push(answersObject.employeerole);
+  dataArrayOfObj.push(answersObject.manager);
+
+  // console.log(typeof answersObject.dept)
+  console.table(dataArrayOfObj);
+
+  runQuestion();
+    })
+  })
+}
 
   function runQuestion() {
     inquirer.prompt(mainQuestion)
@@ -149,6 +194,22 @@ runQuestion();
             case "View All Roles":
               displayRoles()
               break;
+
+            case "View All Employees":
+              displayEmployees()
+              break;
+            
+            case "Add Department":
+            addDepartment()
+            break;
+
+            case "Add Role":
+              addRoles()
+              break;
+
+            case "Add Employee":
+            addEmployees()
+            break;
       
           default:
               break;
