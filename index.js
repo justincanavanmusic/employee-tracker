@@ -1,40 +1,46 @@
 const inquirer = require('inquirer');
 const fs=require('fs');
 // const cTable = require('console.table');
-// const mysql = require('mysql2');
+const mysql = require('mysql2');
 
-// const connection = mysql.createConnection({
-//     host: 'localhost',
-//     user: 'root',
-//     database: 'test'
-//   });
 
-const questions = [    
+const connection = mysql.createConnection({
+    host: '127.0.0.1',
+    user: 'root',
+    password: 'rootroot',
+    database: 'employee_db',
+    port: 3306
+  });
+
+const mainQuestion = [    
     {
      type: 'list',
      message: 'What would you like to do?',
      choices: ['View All Employees', "Add Employee", "Update Employee Role", "View All Roles", "Add Role", "View All Departments", "Add Department", "Quit"],
      name: 'option'
-      },
-    {
+      }
+]
+const departmentQuestions= [   ///add department
+  {
      type: 'input',
      message: 'What is the name of the department?',
      name: 'dept',
      validate: function (userAnswer) {
-      
         if (userAnswer.length>0) {
-          console.log (`
-          Added "${userAnswer}" to the database.`);
+        console.log (`
+  Added "${userAnswer}" to the database.`);
           
         } 
         else {
             return "Please give a response";
         }
-    
-    }
+        return true
     },
-                          //back to question 1 here
-    {
+    }
+  ]
+                //back to question 1 here
+  const roleQuestions=
+   [             {
      type: 'input',
      message: 'What is the name of the role?',
      name: 'name'
@@ -51,17 +57,18 @@ const questions = [
     name: 'deptrole',
     validate: function (userAnswer) {
       if (userAnswer.length>0) {
-          console.log (`Added ${userAnswer} to the database.`);
-         
+        console.log (`
+Added "${userAnswer}" to the database.`);
+
       } 
       else {
           return "Please give a response";
       }
-      return true;
-      //message 'added ${userAnswer}...' go back to question 1
   }
-  },
-  {
+  }
+]
+const employeeQuestions=
+ [ {
     type: 'input',
     message: `What is the employee's first name?`,
     name: 'firstname'
@@ -83,7 +90,10 @@ const questions = [
   choices: ['None', "John Doe", "Mike Chan", "Ashley Rodriguez", "Kevin Tupik", "Kunal Singh", "Malia Brown", "Sarah Lourd", "Tom Allen"],
   name: 'manager'
                                 //back to first question
-  },
+  }
+]
+  const updateEmpRole =
+[ 
   {
   type: 'list',
   message: `Which employee's role do you want to update?`,
@@ -96,24 +106,53 @@ const questions = [
   choices: ['Sales Lead', "Salesperson", "Lead Engineer", "Software Engineer", "Account Manager", "Accountant", "Legal Team Lead", "Lawyer"],
   name: 'employeerole'
           
-  },
-
-];
-
-function changeThisFunctionName1(fileName, dataObject) {
-    
-    fs.writeFile(fileName, changeThisFunctionName2(dataObject) ,(errPlaceholder) => errPlaceholder ? console.error(errPlaceholder) : console.log('change this later')
-    )
-   
   }
+]
 
-  function runQuestions() {
-    inquirer.prompt(questions)
+function displayDepartments() {
+  connection.query('select * from department', function(err, data){ 
+    if (err) throw err
+console.table(data);
+runQuestion();
+  })
+}
+
+function displayRoles() {
+  connection.query('select * from role', function(err, data){ 
+    if (err) throw err
+console.table(data);
+runQuestion();
+  })
+}
+// function addDepartment() {
+//   inquirer.prompt(departmentQuestions)
+//   .then(answers=>{
+//     connection.query('select * from department', function(err, data){ 
+//       if (err) throw err
+//   console.table(data);
+//   runQuestion();
+//     })
+//   })
+// }
+
+
+  function runQuestion() {
+    inquirer.prompt(mainQuestion)
   
       .then(answersObject=> {
      
-          changeThisFunctionName1('', answersObject); 
-          console.log(answersObject);
+          switch (answersObject.option) {
+            case "View All Departments":
+                displayDepartments()
+                break;
+
+            case "View All Roles":
+              displayRoles()
+              break;
+      
+          default:
+              break;
+        }
           })
         .catch(error => {
           console.log("An error occured!");
@@ -121,5 +160,7 @@ function changeThisFunctionName1(fileName, dataObject) {
       };
   
   //calling runQuestions function
-  runQuestions();
+  runQuestion();
+  //connection.connect(runQuestions)
+  //do this later
 
