@@ -1,3 +1,5 @@
+USE employee_db;
+
 SELECT role.id, role.title, role.salary, department.name AS department
 FROM role
 JOIN department
@@ -9,4 +11,4 @@ FROM employee
 JOIN role
 ON employee.role_id = role.id
 JOIN department
-ON role.department_id = department.id
+ON role.department_id = department.id;

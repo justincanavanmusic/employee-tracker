@@ -133,25 +133,9 @@ runQuestion();
 function addDepartment() {
   inquirer.prompt(departmentQuestions)
   .then(answersObj=>{
-    // connection.query('select * from department', function(err, dataObj){ 
-    //   if (err) throw err
     connection.query(`insert into department(name) values("${answersObj.name}")`, function (err){
       if(err) throw err;
       console.log("dept added");
-    
-
-    // const addedDeptObj = {
-    //   id: dataObj.length+1,
-    //   name: answersObj.dept
-    // }
-    // dataObj.push(addedDeptObj);
-  
-  // dataObj.push(JSON.parse(answersObject.dept))
-  // console.log(answersObject.dept)
-
-  // console.table(dataObj); //contains all info
-  // console.log(typeof answersObject) //prints {dept: Justin}   //typeof object
-  // console.log(dataObj[0]);
 
   runQuestion();
     })
@@ -160,21 +144,7 @@ function addDepartment() {
 function addRoles() {
   inquirer.prompt(roleQuestions)
   .then(answersObj=>{
-  //   connection.query('select * from role', function(err, dataObj){ 
-  //     if (err) throw err
-
-  //   const addedRoleObj={
-  //     id: dataObj.length+1,
-  //     title: answersObj.title,
-  //     salary: answersObj.salary
-  //   }
-  //   dataObj.push(addedRoleObj)
-  
-
-  // console.table(dataObj);
-
-  // runQuestion();
-  //   })
+ 
   connection.query(`insert into role(title, salary) values("${answersObj.title}",${answersObj.salary})`, function (err){
     if(err) throw err;
     console.log("Role Added");
@@ -189,40 +159,20 @@ function addEmployees() {
       if (err) throw err;
       console.log("Employee Added")
   
-  // const addEmployeeObj={
-  //   id: dataObj.length+1,
-  //   first_name: answersObj.firstname,
-  //   last_name: answersObj.lastname,
-  //   title: answersObj.employeerole,
-  //   salary: function () {
-  //     if(answersObj.employeerole==="Sales Lead") {
-  //     return 100000
-  //   } if(answersObj.employeerole==="Salesperson") {
-  //     return 80000
-  //   } if(answersObj.employeerole==="Lead Engineer") {
-  //     return 150000
-  //   } if(answersObj.employeerole==="Software Engineer") {
-  //     return 120000
-  //   } if(answersObj.employeerole==="Account Manager") {
-  //     return 160000
-  //   } if(answersObj.employeerole==="Legal Team Lead") {
-  //     return 250000
-  //   } if(answersObj.employeerole==="Accountant") {
-  //     return 125000
-  //   } if(answersObj.employeerole==="Lawyer") {
-  //     return 190000
-  //   } else {
-  //     console.log("somethings wrong");
-  //   }
-  // } ()
-  // };
-  // dataObj.push(addEmployeeObj)
-  // console.table(dataObj);
-
   runQuestion();
     })
   })
 }
+// function updateEmpRole() {
+//   inquirer.prompt(updateEmpRole)
+//   .then(answersObj=>{
+//     connection.query(`UPDATE employee`, function(err, dataObj){ 
+//       if (err) throw err;
+//       console.log("Employee Role Updated")
+//       runQuestion();
+//     })
+//   })
+// }
 // function addEmployees() {
 //   inquirer.prompt(employeeQuestions)
 //   .then(answersObj=>{
