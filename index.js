@@ -84,12 +84,12 @@ const employeeQuestions=
   choices: ['Sales Lead', "Salesperson", "Lead Engineer", "Software Engineer", "Account Manager", "Accountant", "Legal Team Lead", "Lawyer"],
   name: 'employeerole'
   },
-  // {
-  // type: 'list',
-  // message: `Who is the employee's manager?`,
-  // choices: ['None', "John Doe", "Mike Chan", "Ashley Rodriguez", "Kevin Tupik", "Kunal Singh", "Malia Brown", "Sarah Lourd", "Tom Allen"],
-  // name: 'manager'
-  // }
+  {
+  type: 'list',
+  message: `Who is the employee's manager?`,
+  choices: ['None', "John Doe", "Mike Chan", "Ashley Rodriguez", "Kevin Tupik", "Kunal Singh", "Malia Brown", "Sarah Lourd", "Tom Allen"],
+  name: 'manager'
+  }
 ]
   const updateEmpRole =
 [ 
@@ -177,45 +177,47 @@ function addRoles() {
   //   })
   connection.query(`insert into role(title, salary) values("${answersObj.title}",${answersObj.salary})`, function (err){
     if(err) throw err;
-    console.log("role added");
+    console.log("Role Added");
+    runQuestion()
   })
   })
 }
 function addEmployees() {
   inquirer.prompt(employeeQuestions)
   .then(answersObj=>{
-    connection.query('select * from employee', function(err, dataObj){ 
-      if (err) throw err
+    connection.query(`insert into employee(first_name, last_name) values("${answersObj.firstname}", "${answersObj.lastname}")`, function(err, dataObj){ 
+      if (err) throw err;
+      console.log("Employee Added")
   
-  const addEmployeeObj={
-    id: dataObj.length+1,
-    first_name: answersObj.firstname,
-    last_name: answersObj.lastname,
-    title: answersObj.employeerole,
-    salary: function () {
-      if(answersObj.employeerole==="Sales Lead") {
-      return 100000
-    } if(answersObj.employeerole==="Salesperson") {
-      return 80000
-    } if(answersObj.employeerole==="Lead Engineer") {
-      return 150000
-    } if(answersObj.employeerole==="Software Engineer") {
-      return 120000
-    } if(answersObj.employeerole==="Account Manager") {
-      return 160000
-    } if(answersObj.employeerole==="Legal Team Lead") {
-      return 250000
-    } if(answersObj.employeerole==="Accountant") {
-      return 125000
-    } if(answersObj.employeerole==="Lawyer") {
-      return 190000
-    } else {
-      console.log("somethings wrong");
-    }
-  } ()
-  };
-  dataObj.push(addEmployeeObj)
-  console.table(dataObj);
+  // const addEmployeeObj={
+  //   id: dataObj.length+1,
+  //   first_name: answersObj.firstname,
+  //   last_name: answersObj.lastname,
+  //   title: answersObj.employeerole,
+  //   salary: function () {
+  //     if(answersObj.employeerole==="Sales Lead") {
+  //     return 100000
+  //   } if(answersObj.employeerole==="Salesperson") {
+  //     return 80000
+  //   } if(answersObj.employeerole==="Lead Engineer") {
+  //     return 150000
+  //   } if(answersObj.employeerole==="Software Engineer") {
+  //     return 120000
+  //   } if(answersObj.employeerole==="Account Manager") {
+  //     return 160000
+  //   } if(answersObj.employeerole==="Legal Team Lead") {
+  //     return 250000
+  //   } if(answersObj.employeerole==="Accountant") {
+  //     return 125000
+  //   } if(answersObj.employeerole==="Lawyer") {
+  //     return 190000
+  //   } else {
+  //     console.log("somethings wrong");
+  //   }
+  // } ()
+  // };
+  // dataObj.push(addEmployeeObj)
+  // console.table(dataObj);
 
   runQuestion();
     })
