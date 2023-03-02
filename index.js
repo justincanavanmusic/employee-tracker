@@ -49,23 +49,23 @@ const departmentQuestions= [   ///add department
     type: 'input',
     message: 'What is the salary of the role?',
     name: 'salary'
-    }
-//     {
-//     type: 'list',
-//     message: 'Which department does the role belong to?',
-//     choices: ['Engineering', "Finance", "Legal", "Sales", "Service"],
-//     name: 'deptrole',
-//     validate: function (userAnswer) {
-//       if (userAnswer.length>0) {
-//         console.log (`
-// Added "${userAnswer}" to the database.`);
+    },
+    {
+    type: 'list',
+    message: 'Which department does the role belong to?',
+    choices: ['Engineering', "Finance", "Legal", "Sales", "Service"],
+    name: 'deptrole',
+    validate: function (userAnswer) {
+      if (userAnswer.length>0) {
+        console.log (`
+Added "${userAnswer}" to the database.`);
 
-//       } 
-//       else {
-//           return "Please give a response";
-//       }
-//   }
-//   }
+      } 
+      else {
+          return "Please give a response";
+      }
+  }
+  }
 ]
 const employeeQuestions=
  [ {
@@ -141,19 +141,29 @@ runQuestion();
 function addDepartment() {
   inquirer.prompt(departmentQuestions)
   .then(answersObj=>{
-    connection.query(`insert into department(name) values("${answersObj.name}")`, function (err){
+    connection.query(`INSERT INTO department(name) values("${answersObj.dept}")`, function (err){
       if(err) throw err;
-      console.log("dept added");
+      console.log("Department Added");
 
   runQuestion();
     })
   })
 }
+
+//INSERT INTO inserts a row into "role" table and sets the column names (title, salary, depart...)
+//SELECT returns the results that will be inserted into the table some of which are entered by the user, lastly selecting the id column from the department table
+//FROM tells us that the "department" table is supplying data for the query
+//WHERE tells us that if the usersAns.deptrole matches department.name to use that corresponding department_id
 function addRoles() {
   inquirer.prompt(roleQuestions)
   .then(answersObj=>{
  
-  connection.query(`insert into role(title, salary) values("${answersObj.title}",${answersObj.salary})`, function (err){
+  connection.query(`INSERT INTO role (title, salary, department_id)
+  SELECT "${answersObj.title}", ${answersObj.salary}, department.id
+  FROM department
+  WHERE department.name = "${answersObj.deptrole}"`, 
+  
+  function (err){
     if(err) throw err;
     console.log("Role Added");
     runQuestion()
@@ -163,9 +173,16 @@ function addRoles() {
 function addEmployees() {
   inquirer.prompt(employeeQuestions)
   .then(answersObj=>{
-    connection.query(`insert into employee(first_name, last_name) values("${answersObj.firstname}", "${answersObj.lastname}")`, function(err, dataObj){ 
-      if (err) throw err;
-      console.log("Employee Added")
+      
+      connection.query(`INSERT INTO employee (first_name, last_name, role_id)
+      SELECT "${answersObj.firstname}", "${answersObj.lastname}", role.id
+      FROM role
+      WHERE role.title = "${answersObj.employeerole}"`, 
+      
+      function (err){
+        if(err) throw err
+        console.log("Role Added");
+  
   
   runQuestion();
     })
@@ -189,21 +206,6 @@ function addEmployees() {
 //     function(err, dataObj){ 
 //       if (err) throw err;
   
-//   const addEmployeeObj={
-//     id: dataObj.length+1,
-//     first_name: answersObj.firstname,
-//     last_name: answersObj.lastname
-//   }
-//   console.table(dataObj);
-
-//   runQuestion();
-//     })
-//   })
-// }
-    // employee.push(answersObject.firstname)
-  // data.push(answersObject.lastname)
-  // data.push(answersObject.employeerole);
-  // data.push(answersObject.manager);
   function runQuestion() {
     inquirer.prompt(mainQuestion)
   
