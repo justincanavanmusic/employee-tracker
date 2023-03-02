@@ -126,13 +126,39 @@ runQuestion();
   })
 }
 
+// function displayEmployees() {
+//   connection.query(`SELECT tbl1.f_name, employee.manager_id, employee.first_name from (SELECT employee.id, employee.first_name as f_name, employee.last_name as l_name, role.title AS title, role.salary AS salary
+//   FROM employee
+//   JOIN role
+//   ON employee.role_id = role.id) as tbl1
+//   JOIN employee
+//   ON employee.id = tbl1.id`,
+//   // JOIN department
+//   // ON role.department_id = department.id`,
+//   // department.name AS department,
+//   function(err, data){ 
+//     if (err) throw err
+// console.table(data);
+// runQuestion();
+//   })
+// }
 function displayEmployees() {
-  connection.query(`SELECT employee.id, employee.first_name, employee.last_name, role.title AS title, role.salary AS salary, department.name AS department
+  connection.query(`SELECT 
+  tbl1.id, 
+  tbl1.first_name, 
+  tbl1.last_name, 
+  tbl1.title, 
+  tbl1.salary, 
+  tbl1.department,
+  CONCAT(employee.first_name, ' ', employee.last_name) AS manager
+   FROM (SELECT employee.id, employee.first_name, employee.last_name, employee.manager_id, role.title AS title, role.salary AS salary, department.name AS department
   FROM employee
   JOIN role
   ON employee.role_id = role.id
   JOIN department
-  ON role.department_id = department.id`, function(err, data){ 
+  ON role.department_id = department.id) as tbl1
+  LEFT JOIN employee
+  ON tbl1.manager_id = employee.id;`, function(err, data){ 
     if (err) throw err
 console.table(data);
 runQuestion();
@@ -173,16 +199,16 @@ function addRoles() {
 function addEmployees() {
   inquirer.prompt(employeeQuestions)
   .then(answersObj=>{
-      
-      connection.query(`INSERT INTO employee (first_name, last_name, role_id)
-      SELECT "${answersObj.firstname}", "${answersObj.lastname}", role.id
-      FROM role
-      WHERE role.title = "${answersObj.employeerole}"`, 
-      
-      function (err){
-        if(err) throw err
-        console.log("Role Added");
-  
+
+      connection.query(`
+  INSERT INTO employee (first_name, last_name, role_id, manager_id)
+  SELECT "${answersObj.firstname}", "${answersObj.lastname}", role.id, employee.id
+  FROM role
+  JOIN employee ON employee.role_id = role.id
+  WHERE role.title = "${answersObj.employeerole}" AND CONCAT(employee.first_name,' ', employee.last_name) = "${answersObj.manager}"`, 
+  function (err) {
+  if (err) throw err
+  console.log("Employee Added");
   
   runQuestion();
     })
@@ -233,7 +259,7 @@ function addEmployees() {
               break;
 
             case "Add Employee":
-            addEmployees()
+              addEmployees()
             break;
       
           default:
