@@ -5,9 +5,12 @@ FROM role
 JOIN department
 ON role.department_id = department.id;
 
-SELECT employee.id, employee.first_name, employee.last_name, role.title AS title, role.salary AS salary, department.name AS department
+SELECT employee.id, employee.first_name, employee.last_name, role.title AS title, role.salary AS salary, department.name AS department, employee.first_name AS manager
+
 FROM employee
 JOIN role
 ON employee.role_id = role.id
 JOIN department
-ON role.department_id = department.id;
+ON role.department_id = department.id
+JOIN employee
+ON employee.manager_id = employee.id;
