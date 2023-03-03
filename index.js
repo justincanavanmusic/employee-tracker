@@ -20,7 +20,7 @@ const mainQuestion = [
      name: 'option'
       }
 ]
-const departmentQuestions= [   ///add department
+const departmentQuestions= [   
   {
      type: 'input',
      message: 'What is the name of the department?',
@@ -106,52 +106,43 @@ const employeeQuestions=
   name: 'employeerole'
           
   }
-]
+] //selects all columns from department table
 function displayDepartments() {
-  connection.query('select * from department', function(err, data){ 
+  connection.query('SELECT * from department', function(err, data){ 
     if (err) throw err
 console.table(data);
 runQuestion();
   })
 }
-
+//SELECT statement selects the desired columns from roles and then also pulls department.name from the department table and is re-named (alias) "department"
+//FROM tells us which table to get the data from
+//the JOIN statement tells us to use the department table when role.department_id = department.id
 function displayRoles() {
   connection.query(`SELECT role.id, role.title, role.salary, department.name AS department
   FROM role
-  JOIN department
-  ON role.department_id = department.id`, function(err, data){ 
+  JOIN department ON role.department_id = department.id`, function(err, data){ 
     if (err) throw err
 console.table(data);
 runQuestion();
   })
 }
 
-// function displayEmployees() {
-//   connection.query(`SELECT tbl1.f_name, employee.manager_id, employee.first_name from (SELECT employee.id, employee.first_name as f_name, employee.last_name as l_name, role.title AS title, role.salary AS salary
-//   FROM employee
-//   JOIN role
-//   ON employee.role_id = role.id) as tbl1
-//   JOIN employee
-//   ON employee.id = tbl1.id`,
-//   // JOIN department
-//   // ON role.department_id = department.id`,
-//   // department.name AS department,
-//   function(err, data){ 
-//     if (err) throw err
-// console.table(data);
-// runQuestion();
-//   })
-// }
 function displayEmployees() {
   connection.query(`SELECT 
   tbl1.id, 
-  tbl1.first_name, 
+tbl1.first_name, 
   tbl1.last_name, 
   tbl1.title, 
   tbl1.salary, 
   tbl1.department,
   CONCAT(employee.first_name, ' ', employee.last_name) AS manager
-   FROM (SELECT employee.id, employee.first_name, employee.last_name, employee.manager_id, role.title AS title, role.salary AS salary, department.name AS department
+  FROM (SELECT employee.id, 
+    employee.first_name, 
+    employee.last_name, 
+    employee.manager_id, 
+    role.title AS title, 
+    role.salary AS salary, 
+    department.name AS department
   FROM employee
   JOIN role
   ON employee.role_id = role.id
@@ -184,6 +175,8 @@ function addRoles() {
   inquirer.prompt(roleQuestions)
   .then(answersObj=>{
  
+
+//SELECT is giving the values to title, salary, and role
   connection.query(`INSERT INTO role (title, salary, department_id)
   SELECT "${answersObj.title}", ${answersObj.salary}, department.id
   FROM department
@@ -214,23 +207,16 @@ function addEmployees() {
     })
   })
 }
-// function updateEmpRole() {
-//   inquirer.prompt(updateEmpRole)
-//   .then(answersObj=>{
-//     connection.query(`UPDATE employee`, function(err, dataObj){ 
-//       if (err) throw err;
-//       console.log("Employee Role Updated")
-//       runQuestion();
-//     })
-//   })
-// }
-// function addEmployees() {
-//   inquirer.prompt(employeeQuestions)
-//   .then(answersObj=>{
-//     connection.query(`INSERT INTO employee (first_name, last_name) VALUES ('${answersObj.firstname}', '${answersObj.lastname}')`,
-    
-//     function(err, dataObj){ 
-//       if (err) throw err;
+function updateEmployeeRole() {
+  inquirer.prompt(updateEmpRole)
+  .then(answersObj=>{
+    connection.query(`UPDATE employee SET title=${answersObj.roleupdate} WHERE CONCAT(employee.first_name, ' ', employee.last_name)="${answersObj.employeerole}")`, function(err, dataObj){ 
+      if (err) throw err;
+      console.log("Employee Role Updated")
+      runQuestion();
+    })
+  })
+}
   
   function runQuestion() {
     inquirer.prompt(mainQuestion)
@@ -260,6 +246,10 @@ function addEmployees() {
 
             case "Add Employee":
               addEmployees()
+            break;
+
+            case "Update Employee Role":
+              updateEmployeeRole()
             break;
       
           default:
