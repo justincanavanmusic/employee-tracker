@@ -154,6 +154,7 @@ console.table(data);
 runQuestion();
   })
 }
+//inserts the userinput as the value into the department name column
 function addDepartment() {
   inquirer.prompt(departmentQuestions)
   .then(answersObj=>{
@@ -167,15 +168,13 @@ function addDepartment() {
 }
 
 //INSERT INTO inserts a row into "role" table and sets the column names (title, salary, depart...)
-//SELECT returns the results that will be inserted into the table some of which are entered by the user, lastly selecting the id column from the department table
+//SELECT returns the values that will be inserted into the table some of which are entered by the user, lastly selecting the id column from the department table
 //FROM tells us that the "department" table is supplying data for the query
-//WHERE tells us that if the usersAns.deptrole matches department.name to use that corresponding department_id
+//WHERE tells us that if the answersObj.deptrole matches department.name to use the department table
 function addRoles() {
   inquirer.prompt(roleQuestions)
   .then(answersObj=>{
  
-
-//SELECT is giving the values to title, salary, and role 
   connection.query(`INSERT INTO role (title, salary, department_id)
   SELECT "${answersObj.title}", ${answersObj.salary}, department.id
   FROM department
@@ -188,14 +187,18 @@ function addRoles() {
   })
   })
 }
+
+//inserts user input as values in the employee table 
+//FROM statement joins role and employee tables if condition matches
+//WHERE statement gives the conditions stating that the user input for employeerole has to match a title column in the role table and the manager prompt answer has to match one of the employees(managers) full name, hence the concatenation
+
 function addEmployees() {
   inquirer.prompt(employeeQuestions)
   .then(answersObj=>{
 
       connection.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id)
   SELECT "${answersObj.firstname}", "${answersObj.lastname}", role.id, employee.id
-  FROM role
-  JOIN employee ON employee.role_id = role.id
+  FROM role JOIN employee ON employee.role_id = role.id
   WHERE role.title = "${answersObj.employeerole}" AND CONCAT(employee.first_name,' ', employee.last_name) = "${answersObj.manager}"`, 
   function (err) {
   if (err) throw err
@@ -215,7 +218,8 @@ function updateEmployeeRole() {
     })
   })
 }
-  
+ 
+//runs main question and then runs the other functions with other prompts depending on the users reesponse to "mainQuestion"
   function runQuestion() {
     inquirer.prompt(mainQuestion)
   
