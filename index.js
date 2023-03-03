@@ -92,7 +92,7 @@ const employeeQuestions=
   name: 'manager'
   }
 ]
-  //prompts to update employee role
+  //prompts to update employee role, didn't complete
   const updateEmpRole =
 [ 
   {
