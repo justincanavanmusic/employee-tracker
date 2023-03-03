@@ -3,7 +3,7 @@ const fs=require('fs');
 const cTable = require('console.table');
 const mysql = require('mysql2');
 
-
+//connection for 
 const connection = mysql.createConnection({
     host: '127.0.0.1',
     user: 'root',
@@ -11,7 +11,7 @@ const connection = mysql.createConnection({
     database: 'employee_db',
     port: 3306
   });
-
+//first prompt question
 const mainQuestion = [    
     {
      type: 'list',
@@ -20,6 +20,7 @@ const mainQuestion = [
      name: 'option'
       }
 ]
+//prompts for department questions
 const departmentQuestions= [   
   {
      type: 'input',
@@ -38,7 +39,7 @@ const departmentQuestions= [
     },
     }
   ]
-                //back to question 1 here
+      //prompts for role questions
   const roleQuestions=
    [             {
      type: 'input',
@@ -66,7 +67,7 @@ Added "${userAnswer}" to the database.`);
       }
   }
   }
-]
+]    //prompts for employee questions
 const employeeQuestions=
  [ {
     type: 'input',
@@ -91,6 +92,7 @@ const employeeQuestions=
   name: 'manager'
   }
 ]
+  //prompts to update employee role
   const updateEmpRole =
 [ 
   {
@@ -106,7 +108,7 @@ const employeeQuestions=
   name: 'employeerole'
           
   }
-] //selects all columns from department table
+] //selects all columns from department table, console.table displays the table with all columns and values in the terminal
 function displayDepartments() {
   connection.query('SELECT * from department', function(err, data){ 
     if (err) throw err
@@ -126,30 +128,27 @@ console.table(data);
 runQuestion();
   })
 }
-
+//uses two separate tables to display data.. selecting the options that i want to be displayed from tbl1
+//concat creates a new column called "manager" that concatenates first_name and last_name from the employee table
+//the 2nd select statement (select employee.id ..) selects data from all 3 tables and joins them together to create tbl1
+//left join employee... joins tbl1 with employee table if tbl1.manager_id=employee.id      the left join makes it so they are all viewed as one table
 function displayEmployees() {
   connection.query(`SELECT 
   tbl1.id, 
-tbl1.first_name, 
+  tbl1.first_name, 
   tbl1.last_name, 
   tbl1.title, 
   tbl1.salary, 
   tbl1.department,
   CONCAT(employee.first_name, ' ', employee.last_name) AS manager
-  FROM (SELECT employee.id, 
-    employee.first_name, 
-    employee.last_name, 
-    employee.manager_id, 
-    role.title AS title, 
-    role.salary AS salary, 
-    department.name AS department
+   FROM (SELECT employee.id, employee.first_name, employee.last_name, employee.manager_id, role.title AS title, role.salary AS salary, department.name AS department
   FROM employee
   JOIN role
   ON employee.role_id = role.id
   JOIN department
   ON role.department_id = department.id) as tbl1
   LEFT JOIN employee
-  ON tbl1.manager_id = employee.id;`, function(err, data){ 
+  ON tbl1.manager_id = employee.id`, function(err, data){ 
     if (err) throw err
 console.table(data);
 runQuestion();
@@ -176,7 +175,7 @@ function addRoles() {
   .then(answersObj=>{
  
 
-//SELECT is giving the values to title, salary, and role
+//SELECT is giving the values to title, salary, and role 
   connection.query(`INSERT INTO role (title, salary, department_id)
   SELECT "${answersObj.title}", ${answersObj.salary}, department.id
   FROM department
@@ -193,8 +192,7 @@ function addEmployees() {
   inquirer.prompt(employeeQuestions)
   .then(answersObj=>{
 
-      connection.query(`
-  INSERT INTO employee (first_name, last_name, role_id, manager_id)
+      connection.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id)
   SELECT "${answersObj.firstname}", "${answersObj.lastname}", role.id, employee.id
   FROM role
   JOIN employee ON employee.role_id = role.id
@@ -210,7 +208,7 @@ function addEmployees() {
 function updateEmployeeRole() {
   inquirer.prompt(updateEmpRole)
   .then(answersObj=>{
-    connection.query(`UPDATE employee SET title=${answersObj.roleupdate} WHERE CONCAT(employee.first_name, ' ', employee.last_name)="${answersObj.employeerole}")`, function(err, dataObj){ 
+    connection.query(`UPDATE employee SET title='${answersObj.roleupdate}' WHERE CONCAT(employee.first_name, ' ', employee.last_name)="${answersObj.employeerole}"`, function(err, dataObj){ 
       if (err) throw err;
       console.log("Employee Role Updated")
       runQuestion();
